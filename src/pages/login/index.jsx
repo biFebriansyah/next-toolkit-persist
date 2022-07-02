@@ -1,6 +1,8 @@
 import style from './style/style.module.css'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from '../../store/slices/users'
 import Header from '../../components/header'
 import Link from '../../components/Links'
 import useApi from '../../helpers/useApi'
@@ -8,6 +10,7 @@ import useApi from '../../helpers/useApi'
 export default function Login() {
    const [Users, SetUsers] = useState({ username: '', password: '' })
    const [PlaceHolder, setPlaceHolder] = useState({ Username: 'Username', Password: 'Password' })
+   const { isAuth } = useSelector((state) => state.users)
 
    const refLogin = useRef(null)
    const refWarUser = useRef(null)
@@ -15,6 +18,13 @@ export default function Login() {
 
    const api = useApi()
    const router = useRouter()
+   const dispatch = useDispatch()
+
+   useEffect(() => {
+      if (isAuth) {
+         router.push('/')
+      }
+   }, [isAuth])
 
    const _HandleKeyBoard = (e) => {
       if (e.key === 'Enter') {
@@ -57,21 +67,23 @@ export default function Login() {
          data: Users
       })
          .then((res) => {
-            router.push('/')
+            const { data } = res.data
+            dispatch(login(data.token))
          })
          .catch((error) => {
-            if (error.response) {
-               const message = error.response.data.result.msg
-               if (message === 'Password Salah') {
-                  newHolder.Password = 'Password Salah'
-                  setPlaceHolder(newHolder)
-                  refWarPass.current.classList.add(style.err)
-               } else if (message === 'Username tidak terdaftar') {
-                  refWarUser.current.classList.add(style.err)
-                  newHolder.Username = 'Username belum terdaftar'
-                  setPlaceHolder(newHolder)
-               }
-            }
+            console.log('🚀 ~ file: index.jsx ~ line 74 ~ goLogin ~ error', error)
+            // if (error.response) {
+            //    const message = error.response.data.result.msg
+            //    if (message === 'Password Salah') {
+            //       newHolder.Password = 'Password Salah'
+            //       setPlaceHolder(newHolder)
+            //       refWarPass.current.classList.add(style.err)
+            //    } else if (message === 'Username tidak terdaftar') {
+            //       refWarUser.current.classList.add(style.err)
+            //       newHolder.Username = 'Username belum terdaftar'
+            //       setPlaceHolder(newHolder)
+            //    }
+            // }
          })
    }
 

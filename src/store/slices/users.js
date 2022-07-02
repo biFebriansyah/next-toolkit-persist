@@ -3,10 +3,24 @@ import { HYDRATE } from 'next-redux-wrapper'
 
 const userSlice = createSlice({
    name: 'users',
-   initialState: {},
+   initialState: {
+      isAuth: false,
+      token: '',
+      data: {}
+   },
    reducers: {
-      setEnt(state, action) {
-         return action.payload
+      login(state, actions) {
+         return {
+            ...state,
+            isAuth: true,
+            token: actions.payload
+         }
+      },
+      addUsers(state, actions) {
+         return {
+            ...state,
+            data: actions.payload
+         }
       }
    },
    extraReducers: {
@@ -20,4 +34,5 @@ const userSlice = createSlice({
    }
 })
 
+export const { login, addUsers } = userSlice.actions
 export default userSlice

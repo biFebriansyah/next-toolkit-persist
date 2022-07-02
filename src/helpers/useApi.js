@@ -6,7 +6,7 @@ function useApi(urls = '') {
    const { token } = useSelector((state) => state.users)
 
    const [requests, setRequests] = useState({
-      baseURL: process.env.REACT_APP_BASEURL || urls,
+      baseURL: 'https://mygoback.herokuapp.com/',
       headers: {
          'Content-Type': 'application/json',
          Authorization: `Bearer ${token}`
@@ -25,7 +25,7 @@ function useApi(urls = '') {
 
    useEffect(() => {
       setConfig()
-   }, [])
+   }, [token])
 
    return { requests: axios.create(requests) }
 }
